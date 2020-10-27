@@ -5,10 +5,11 @@ const app = express();
 const port = 3000;
 
 // create application/json parser
-var jsonParser = bodyParser.json();
+var jsonParser = bodyParser.urlencoded({ extended: true });
 
-app.post("/badge-statistics/", jsonParser, function (req, res) {
-  if (req.body.user_id !== null && req.body.user_id !== undefined && req.body.user_id > 0) {
+app.get("/badge-statistics/", jsonParser, function (req, res) {
+  let req_user_id = req.query.user_id;
+  if (req_user_id !== null && req_user_id !== undefined && req_user_id > 0) {
     res.send({
       statistics_response,
     });
@@ -18,21 +19,15 @@ app.post("/badge-statistics/", jsonParser, function (req, res) {
   }
 });
 
-app.post("/date-filtered-badges/", jsonParser, function (req, res) {
-  let req_date = req.body.date ? parseInt(req.body.date) : null;
-  let req_month = req.body.month ? parseInt(req.body.month) : null;
-  let req_year = req.body.year ? parseInt(req.body.year) : null;
-
-  if (
-    req.body.user_id !== null &&
-    req.body.user_id !== undefined &&
-    req.body.user_id > 0 &&
-    req_date &&
-    req_month &&
-    req_year
-  ) {
+app.get("/date-filtered-badges/", jsonParser, function (req, res) {
+  let req_user_id = req.query.user_id;
+  if (req_user_id !== null && req_user_id !== undefined && req_user_id > 0 && req.query.date) {
+    let req_unsplit_date = req.query.date.split(" ")[0];
+    let req_split_date = req_unsplit_date.split("-");
+    let req_date = parseInt(req_split_date[2]);
+    let req_month = parseInt(req_split_date[1]);
+    let req_year = parseInt(req_split_date[0]);
     let date = new Date(req_year, req_month - 1, req_date + 1, 0, 0, 0);
-
     let limit = date.getDay() - 2;
     limit <= 0 ? (limit += 7) : (limit += 0);
     let response = date_filtered_badges_response;
