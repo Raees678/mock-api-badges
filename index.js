@@ -7,7 +7,7 @@ const port = 3000;
 // create application/json parser
 var jsonParser = bodyParser.urlencoded({ extended: true });
 
-app.get("/badge-statistics/", jsonParser, function (req, res) {
+app.get("/badges/statistics", jsonParser, function (req, res) {
   let req_user_id = req.query.user_id;
   if (req_user_id !== null && req_user_id !== undefined && req_user_id > 0) {
     res.send({
@@ -19,7 +19,7 @@ app.get("/badge-statistics/", jsonParser, function (req, res) {
   }
 });
 
-app.get("/date-filtered-badges/", jsonParser, function (req, res) {
+app.get("/date-filtered-badges", jsonParser, function (req, res) {
   let req_user_id = req.query.user_id;
   if (req_user_id !== null && req_user_id !== undefined && req_user_id > 0 && req.query.date) {
     let req_unsplit_date = req.query.date.split(" ")[0];
@@ -28,6 +28,7 @@ app.get("/date-filtered-badges/", jsonParser, function (req, res) {
     let req_month = parseInt(req_split_date[1]);
     let req_year = parseInt(req_split_date[0]);
     let date = new Date(req_year, req_month - 1, req_date + 1, 0, 0, 0);
+
     let limit = date.getDay() - 2;
     limit <= 0 ? (limit += 7) : (limit += 0);
     let response = date_filtered_badges_response;
